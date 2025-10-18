@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.db import models
 from .models import Post, Category, Location
+
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'pub_date', 'author', 'category', 'is_published')
@@ -8,14 +10,24 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('category', 'is_published')
     fieldsets = (
         (None, {
-            'fields': ('title', 'text', 'pub_date', 'author', 'category', 'location', 'is_published')
+            'fields': ('title', 'text', 'pub_date', 'author', 'category',
+                       'location', 'is_published')
         }),
     )
     formfield_overrides = {
-        models.BooleanField: {'help_text': 'Снимите галочку, чтобы скрыть публикацию.'},
-        models.SlugField: {'help_text': 'Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.'},
-        models.DateTimeField: {'help_text': 'Если установить дату и время в будущем — можно делать отложенные публикации.'},
+        models.BooleanField: {
+            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
+        },
+        models.SlugField: {
+            'help_text': ('Идентификатор страницы для URL; разрешены символы '
+                          'латиницы, цифры, дефис и подчёркивание.')
+        },
+        models.DateTimeField: {
+            'help_text': ('Если установить дату и время в будущем — можно '
+                          'делать отложенные публикации.')
+        },
     }
+
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug', 'is_published')
@@ -28,9 +40,15 @@ class CategoryAdmin(admin.ModelAdmin):
         }),
     )
     formfield_overrides = {
-        models.BooleanField: {'help_text': 'Снимите галочку, чтобы скрыть публикацию.'},
-        models.SlugField: {'help_text': 'Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.'},
+        models.BooleanField: {
+            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
+        },
+        models.SlugField: {
+            'help_text': ('Идентификатор страницы для URL; разрешены символы '
+                          'латиницы, цифры, дефис и подчёркивание.')
+        },
     }
+
 
 class LocationAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_published')
@@ -43,8 +61,11 @@ class LocationAdmin(admin.ModelAdmin):
         }),
     )
     formfield_overrides = {
-        models.BooleanField: {'help_text': 'Снимите галочку, чтобы скрыть публикацию.'},
+        models.BooleanField: {
+            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
+        },
     }
+
 
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
