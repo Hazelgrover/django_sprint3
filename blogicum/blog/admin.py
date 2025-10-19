@@ -1,75 +1,63 @@
 from django.contrib import admin
-from django.db import models
-from .models import Post, Category, Location
+from .models import Category, Location, Post
 
 
-class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'pub_date', 'author', 'category', 'is_published')
-    list_editable = ('is_published',)
-    search_fields = ('title',)
-    list_filter = ('category', 'is_published')
-    fieldsets = (
-        (None, {
-            'fields': ('title', 'text', 'pub_date', 'author', 'category',
-                       'location', 'is_published')
-        }),
-    )
-    formfield_overrides = {
-        models.BooleanField: {
-            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
-        },
-        models.SlugField: {
-            'help_text': ('Идентификатор страницы для URL; разрешены символы '
-                          'латиницы, цифры, дефис и подчёркивание.')
-        },
-        models.DateTimeField: {
-            'help_text': ('Если установить дату и время в будущем — можно '
-                          'делать отложенные публикации.')
-        },
-    }
-
-
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'is_published')
-    list_editable = ('is_published',)
-    search_fields = ('title',)
-    list_filter = ('is_published',)
-    fieldsets = (
-        (None, {
-            'fields': ('title', 'description', 'slug', 'is_published')
-        }),
+    list_display = (
+        'title',
+        'description',
+        'slug',
+        'is_published',
+        'created_at'
     )
-    formfield_overrides = {
-        models.BooleanField: {
-            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
-        },
-        models.SlugField: {
-            'help_text': ('Идентификатор страницы для URL; разрешены символы '
-                          'латиницы, цифры, дефис и подчёркивание.')
-        },
-    }
+    list_editable = ('is_published',)
+    search_fields = ('title', 'slug')
+    list_filter = ('is_published', 'created_at')
+    prepopulated_fields = {'slug': ('title',)}
 
 
+@admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_published')
+    list_display = (
+        'name',
+        'is_published',
+        'created_at'
+    )
     list_editable = ('is_published',)
     search_fields = ('name',)
-    list_filter = ('is_published',)
-    fieldsets = (
-        (None, {
-            'fields': ('name', 'is_published')
-        }),
+    list_filter = ('is_published', 'created_at')
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'author',
+        'category',
+        'location',
+        'pub_date',
+        'is_published',
+        'created_at'
     )
-    formfield_overrides = {
-        models.BooleanField: {
-            'help_text': 'Снимите галочку, чтобы скрыть публикацию.'
-        },
-    }
+    list_editable = ('is_published',)
+    search_fields = ('title', 'text')
+    list_filter = (
+        'is_published',
+        'category',
+        'location',
+        'author',
+        'pub_date'
+    )
+    autocomplete_fields = (
+        'author',
+        'category',
+        'location'
+    )
+    date_hierarchy = 'pub_date'
 
 
-admin.site.register(Post, PostAdmin)
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Location, LocationAdmin)
-
+# Настройка названия приложения в админке
+admin.site.index_title = 'Администрирование блога'
+admin.site.site_header = 'Админка блога'
 admin.site.site_title = 'Блог'
-admin.site.site_header = 'Блог'
